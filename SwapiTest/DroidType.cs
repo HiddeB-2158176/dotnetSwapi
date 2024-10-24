@@ -22,13 +22,12 @@ namespace SwapiTest
 
         public class DroidResolvers
         {
-            public IEnumerable<Character> GetFriends([Parent] Droid droid, [Service] Data data)
+            public async Task<IEnumerable<Character>> GetFriends([Parent] Droid droid, [Service] Data data)
             {
-                // Resolve friend IDs to Character objects
-                foreach (var friendId in droid.Friends)
-                {
-                    yield return data.GetCharacterById(friendId);
-                }
+                var friendIds = droid.Friends;
+    
+                // Use the data service to access the DbContext
+                return await data.GetFriends(friendIds);
             }
         }
     }

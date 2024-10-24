@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SwapiTest")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+77bd71aab9d09651ba8447b7a6b80176da7eabd0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c0f2b9b5c08c9a5940d3def9834478dc696922e5")]
 [assembly: System.Reflection.AssemblyProductAttribute("SwapiTest")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SwapiTest")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

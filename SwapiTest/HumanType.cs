@@ -28,23 +28,24 @@ namespace SwapiTest
         }
 
         public class HumanResolvers
+    {
+        // Resolves the friends for a human character
+        public async Task<IEnumerable<Character>> GetFriends([Parent] Human human, [Service] Data data)
         {
+            var friendIds = human.Friends;
 
-            public IEnumerable<Character> GetFriends([Parent] Human human, [Service] Data data)
-            {
-                foreach (var friendId in human.Friends)
-                {
-                    yield return data.GetCharacterById(friendId);
-                }
-            }
-
-            public IEnumerable<Starship> GetStarships([Parent] Human human, [Service] Data data)
-            {
-                foreach (var starshipId in human.Starships)
-                {
-                    yield return data.GetStarshipById(starshipId);
-                }
-            }
+            // Use the data service to access the DbContext
+            return await data.GetFriends(friendIds);
         }
+
+        // Resolves the starships for a human character
+        public async Task<IEnumerable<Starship>> GetStarships([Parent] Human human, [Service] Data data)
+        {
+            var starshipIds = human.Starships;
+
+            // Use the data service to access the DbContext
+            return await data.GetStarships(starshipIds);
+        }
+    }
     }
 }

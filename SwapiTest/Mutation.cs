@@ -1,30 +1,33 @@
-using HotChocolate;
-using HotChocolate.Types;
 using SwapiTest.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace SwapiTest
 {
     public class Mutation
     {
-        public Human UpdateMass(string id, float newMass, [Service] Data data)
+        public async Task<Human> UpdateMassAsync(
+            string id, 
+            float mass, 
+            [Service] SwapiDbContext dbContext)
         {
-            // Retrieve the Human by ID
-            var human = data.GetCharacterById(id) as Human;
-
+            var human = await dbContext.Characters.OfType<Human>().FirstOrDefaultAsync(c => c.Id == id);
             if (human == null)
             {
-                throw new GraphQLException($"Human with ID {id} not found.");
+                throw new Exception("Human not found");
             }
 
-            // Update the mass
-            human.Mass = newMass;
+            human.Mass = mass;
+            await dbContext.SaveChangesAsync();
 
             return human;
         }
 
-        public Starship AddStarship(string id, string name, double length, [Service] Data data)
+        public async Task<Starship> AddStarshipAsync(
+            string id,
+            string name, 
+            float length, 
+            [Service] SwapiDbContext dbContext)
         {
-            // Create a new Starship
             var starship = new Starship
             {
                 Id = id,
@@ -32,40 +35,32 @@ namespace SwapiTest
                 Length = length
             };
 
-            // Add the Starship to the list
-            data.Starships.Add(starship);
+            dbContext.Starships.Add(starship);
+            await dbContext.SaveChangesAsync();
 
             return starship;
         }
 
-         public Human AddStarshipToHuman(string humanId, string starshipId, [Service] Data data)
+        public async Task<Human> AddStarshipToHumanAsync(
+            string humanId, 
+            string starshipId, 
+            [Service] SwapiDbContext dbContext)
         {
-            // Retrieve the Human by ID
-            var human = data.GetCharacterById(humanId) as Human;
+            Human human = await dbContext.Characters.OfType<Human>().FirstOrDefaultAsync(c => c.Id == humanId);
+            var starship = await dbContext.Starships.FindAsync(starshipId);
 
-            if (human == null)
+            if (human == null || starship == null)
             {
-                throw new GraphQLException($"Human with ID {humanId} not found.");
+                throw new Exception("Human or Starship not found");
             }
 
-            // Retrieve the Starship by ID
-            var starship = data.GetStarshipById(starshipId);
+            var starshipIds = human.Starships;
+            starshipIds.Add(starship.Id);
+            human.Starships = starshipIds; 
 
-            if (starship == null)
-            {
-                throw new GraphQLException($"Starship with ID {starshipId} not found.");
-            }
+            await dbContext.SaveChangesAsync();
 
-            // Check if the starship is already in the list
-            if (!human.Starships.Contains(starship.Id))
-            {
-                // Add the starship ID to the Human's list of starships
-                human.Starships.Add(starship.Id);
-            }
-
-
-
-            return human;  // Return the updated Human object
+            return human;
         }
     }
 }
